@@ -10,11 +10,10 @@ class Node {
 
     public:
     
-    string name;
     vector< pair< string, int > > connections;
 
     Node();
-    Node( string _name, vector< pair< string, int > > _connections);
+    Node(vector< pair< string, int > > _connections);
 };
 
 #endif
