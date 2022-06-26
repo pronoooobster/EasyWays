@@ -6,56 +6,53 @@
 #include <unordered_map>
                                                                 // functions for data read / write
                                                                 // into files
+string filePath = "";
+ifstream inputFile;
+ofstream outputFile;
 
-void dataFileInit(fstream &dataFile, string filename) {
-    dataFile.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
-    if(!dataFile) {
-        dataFile.open(filename, std::fstream::in | std::fstream::out | std::fstream::trunc);
-    }
+void setFilePath(string _filePath) {
+    filePath = _filePath;
 }
 
-void dataFileClose(fstream &dataFile) {
-    dataFile.close();
-}
-
-void writeHashmap(fstream &dataFile, string filename, unordered_map<string, Node> &hashmap) {
+void writeHashmap(unordered_map<string, Node> &hashmap) {
     unordered_map<string, Node> :: iterator it = hashmap.begin();
-    dataFile.close();
-    dataFile.open(filename, std::fstream::out | std::fstream::in | std::fstream::trunc);
+
+    outputFile.open(filePath, std::fstream::out | std::fstream::trunc);
 
     while(it != hashmap.end()) {
-        dataFile << it -> first << "\n";
+        outputFile << it -> first << "\n";
 
         for(int i = 0; i < (it -> second).connections.size(); ++i) {
-            dataFile << (it -> second).connections[i].first << " ";
-            dataFile << (it -> second).connections[i].second << "\n";
+            outputFile << (it -> second).connections[i].first << " ";
+            outputFile << (it -> second).connections[i].second << "\n";
         }
 
-        dataFile << "#\n";
+        outputFile << "#\n";
         it++;
     }
+
+    outputFile.clear();
+    outputFile.close();
 }
 
-void readHashmap(fstream &dataFile, unordered_map<string, Node> &hashmap) {
-                                                // move cursor to the begining
-    dataFile.clear();
-    dataFile.seekg(0, dataFile.beg);
-
-    hashmap.clear();
+void readHashmap(unordered_map<string, Node> &hashmap) {
+    inputFile.open(filePath);
     string name, elementFirst = "#";
     int elementSecond;
 
     while(true) {
-        dataFile >> name;
-        
-        if(dataFile.eof()) break;
+        inputFile >> name;
+        if(inputFile.eof()) break;
         
         hashmap[name] = Node();
         while(true) {
-            dataFile >> elementFirst;
+            inputFile >> elementFirst;
             if(elementFirst == "#") break;
-            dataFile >> elementSecond;
+            inputFile >> elementSecond;
             hashmap[name].connections.push_back({elementFirst, elementSecond});
         }
     }
+
+    inputFile.clear();
+    inputFile.close();
 }

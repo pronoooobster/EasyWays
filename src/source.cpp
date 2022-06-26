@@ -13,13 +13,11 @@ int main() {
     const string dataFilePath = "../data/nodesData.dat";
     unordered_map<string, Node> network;
                                                     // initiation of the data file
-    fstream dataFile;
-    dataFileInit(dataFile, dataFilePath);
+    setFilePath(dataFilePath);
     
-    readHashmap(dataFile, network);
-    
+    readHashmap(network);
+
     intro(network);
 
-    dataFileClose(dataFile);
     return 0;
 }

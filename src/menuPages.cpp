@@ -3,19 +3,90 @@
 #include <conio.h>
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include "../inc/menuPages.hpp"
 #include "../inc/logisticNode.hpp"
+#include "../inc/fileStream.hpp"
 
 using namespace std;
 
 void clearscr();
 void intro(unordered_map<string, Node> &network);
-                                    // current logistics network page
-void currentNetwork(unordered_map<string, Node> &network) {
-    int ans = 0;
+
+                                    // transportation node adding menu
+void addNode(unordered_map<string, Node> &network) {
+    clearscr();
+    readHashmap(network);
+
+    string nodeName, inputStr;
+    int inputInt, numberOfConns;
+
+    cout << "\t Add a node to the network\n\n";
+    cout << "\tNode name: ";
+    cin >> nodeName;
+
+    network[nodeName] = Node();
+    
+    cout << "\n\tEnter node connections (end with q as a Direction)\n";
+    while(true) {
+        cout << "\tDirection: ";
+        cin >> inputStr;
+
+        if(inputStr == "q" || inputStr == "Q") break;
+
+        cout << "\tLength (minutes): ";
+        cin >> inputInt;
+
+        network[nodeName].connections.push_back({inputStr, inputInt});
+    }
+
+    writeHashmap(network);
+    intro(network);
+}
+
+                                    // transportation node remove menu
+void removeNode(unordered_map<string, Node> &network) {
+    string ans = "";
     unordered_map<string, Node> :: iterator it = network.begin();
+    readHashmap(network);
 
     clearscr();
+    cout << "\t Nodes in the network:\n";
+
+    while(it != network.end()) {
+        cout << "\t\t" << it -> first << "\n";
+        it++;
+    }
+
+    while(true) {
+        cout << "\tEnter the name of the node to delete (or 1 to return to the home menu): ";
+        cin >> ans;
+        
+        if(ans == "1") {
+            break;
+        }
+
+        if(network.find(ans) == network.end()) {
+            cout << "\n\t" << ans << " is not in the nodes list!\n";
+        } else {
+            network.erase(network.find(ans));
+            writeHashmap(network);
+            cout << "\n\t" << ans << " is removed from the list! \n\tEnter 1 to return to the home menu\n";
+            cin >> ans;
+            break;
+        }
+    }
+    intro(network);
+}
+
+                                    // current logistics network page
+void currentNetwork(unordered_map<string, Node> &network) {
+    clearscr();
+
+    int ans = 0;
+    unordered_map<string, Node> :: iterator it = network.begin();
+    readHashmap(network);
+
     cout << "\t Current logistics network:\n";
     
     while(it != network.end()) {
@@ -28,6 +99,7 @@ void currentNetwork(unordered_map<string, Node> &network) {
     }
     cout << "\n\t1. To the home menu\n";
     cin >> ans;
+
     intro(network);
 }
 
@@ -51,9 +123,11 @@ void intro(unordered_map<string, Node> &network) {
         break;
     
     case 2:
+        addNode(network);
         break;
 
     case 3:
+        removeNode(network);
         break;
 
     case 4: 

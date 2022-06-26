@@ -7,12 +7,11 @@
 #include "logisticNode.hpp"
                                                             // functions for data read / write
                                                             // into files
-void dataFileInit(fstream &dataFile, string filename);
 
-void dataFileClose(fstream &dataFile);
+void setFilePath(string _filePath);
 
-void writeHashmap(fstream &dataFile, string filename, unordered_map<string, Node> &hashmap);
+void writeHashmap(unordered_map<string, Node> &hashmap);
 
-void readHashmap(fstream &dataFile, unordered_map<string, Node> &hashmap);
+void readHashmap(unordered_map<string, Node> &hashmap);
 
 #endif
