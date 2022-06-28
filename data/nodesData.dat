@@ -1,6 +1,12 @@
+LA
+SF 1900
+#
 Stockholm
 Berlin 1000
 Malmo 300
+#
+Malmo
+Berlin 1000
 #
 Kyiv
 Berlin 1900
@@ -8,4 +14,12 @@ Berlin 1900
 Berlin
 SF 3000
 Kyiv 1000
+#
+SF
+Stockholm 4000
+NYC 3000
+#
+NYC
+Berlin 2900
+SF 2000
 #

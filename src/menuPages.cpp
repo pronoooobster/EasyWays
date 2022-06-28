@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <unordered_map>
 #include <string>
+#include <queue>
 #include <vector>
 #include "../inc/menuPages.hpp"
 #include "../inc/logisticNode.hpp"
@@ -12,6 +13,98 @@ using namespace std;
 
 void clearscr();
 void intro(unordered_map<string, Node> &network);
+
+                                    // calculating a route between two nodes
+                                    // using Dijkstra's algorithm
+void calculateRoute(unordered_map<string, Node> &network) {
+    clearscr();
+    readHashmap(network);
+    unordered_map<string, Node> :: iterator it;
+
+    string fromNode, toNode;
+                                    // reading the data from the user
+    cout << "\t Caclucate an optimal route between nodes\n";
+    cout << "\n\tEnter the start node of the route: ";
+    cin >> fromNode;
+    cout << "\n\tEnter the end node of the route: ";
+    cin >> toNode;
+
+                                    // check if the start and the end nodes are in the network
+    if(network.find(fromNode) == network.end()) {
+        cout << "\n\t" << fromNode << " is not in the nodes list!\n" << "\tPress 1 to return to the home menu \n";
+        cin >> fromNode;
+        intro(network);
+    }
+
+    if(network.find(toNode) == network.end()) {
+        cout << "\n\t" << toNode << " is not in the nodes list!\n" << "\tPress 1 to return to the home menu \n";
+        cin >> toNode;
+        intro(network);
+    }
+
+                                    // Dijkstra's algorithm
+    const int INF = 0x3f3f3f3f;
+    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> vert;
+    
+    unordered_map<string, pair<string, int>> prev;
+
+    unordered_map<string, int> dist;
+    for(it = network.begin(); it != network.end(); it++) {
+        dist[it -> first] = INF;
+    }
+    
+    dist[fromNode] = 0;
+    vert.push({0, fromNode});
+
+    while(!vert.empty()) {
+        string curr = vert.top().second;
+        vert.pop();
+
+        vector<pair<string, int>> connections = network[curr].connections;
+        for(int i = 0; i < connections.size(); ++i) {
+            string adj = connections[i].first;
+            int weight = connections[i].second;
+
+            if(dist[adj] > (dist[curr] + weight)) {
+                dist[adj] = dist[curr] + weight;
+                vert.push({(dist[curr] + weight), adj});
+                prev[adj] = {curr, (weight)};
+            }
+        }
+    }
+
+                                    // output of the result
+    clearscr();
+
+    if(prev.find(toNode) == prev.end()) {
+        cout << "\n\tIt is impossible to get from " << fromNode << " to " << toNode << "\n\n";
+        cout << "\tPress 1 to return to the home menu \n";
+        cin >> fromNode;
+        intro(network);
+    }
+    
+    vector<pair<string, int>> result;
+    string curr = toNode;
+    result.push_back({toNode, -1});
+    while(true) {
+        if(curr == fromNode) break;
+
+        result.push_back(prev[curr]);
+        curr = prev[curr].first;
+    }
+
+    cout << "\n\tThe shortest route from " << fromNode << " to " << toNode << " is:\n\n";
+    cout << "\t ";
+    for(int i = result.size() - 1; i > 0; --i) {
+        cout << result[i].first << " - " << result[i].second << " - ";
+    }
+    cout << result[0].first << "\n\n";
+    cout << "\tAnd takes " << dist[toNode] << " minutes\n\n";
+
+    cout << "\tPress 1 to return to the home menu \n";
+    cin >> fromNode;
+    intro(network);
+}
 
                                     // transportation node adding menu
 void addNode(unordered_map<string, Node> &network) {
@@ -131,6 +224,7 @@ void intro(unordered_map<string, Node> &network) {
         break;
 
     case 4: 
+        calculateRoute(network);
         break;
     
     default:
