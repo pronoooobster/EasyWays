@@ -1,6 +1,7 @@
 # EasyWays
 
 Logistics management system based on graphs
+
 Technologies used: C++
 
 - Dijkstra's algorithm is used to calculate the best route between two logistic hubs (if such route exists);
